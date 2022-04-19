@@ -29,6 +29,13 @@ class BaseCountry implements CountryInterface {
   protected $conquered;
 
   /**
+   * O país conquistador caso tenha sido conquistado.
+   *
+   * @var CountryInterface
+   */
+  protected $conquerorCountry;
+
+  /**
    * Numero de tropas do país.
    *
    * @var int

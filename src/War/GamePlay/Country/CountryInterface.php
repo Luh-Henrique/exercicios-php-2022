@@ -67,6 +67,14 @@ interface CountryInterface {
   public function isConquered(): bool;
 
   /**
+   * Define o pais como conquistado e passa o nome de seu conquistador.
+   * 
+   * @return void
+   */
+
+  public function setConquered(CountryInterface  $conquerCountry): void;
+
+  /**
    * Called when, after a battle, the defending country end up with 0 troops.
    *
    * Here, you must register the neighbors of the conquered country as your own.
