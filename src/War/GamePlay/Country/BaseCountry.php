@@ -15,6 +15,118 @@ class BaseCountry implements CountryInterface {
   protected $name;
 
   /**
+   * O array com os vizinhos do país.
+   *
+   * @var array
+   */
+  protected $arr_neighbors;
+
+  /**
+   * A flag de conquistado ou não.
+   *
+   * @var bool
+   */
+  protected $conquered;
+
+  /**
+   * Numero de tropas do país.
+   *
+   * @var int
+   */
+  protected $troops;
+
+  /**
+   * Retorna o nome do país.
+   * 
+   * @return string
+   */
+
+  public function getName(): string{
+    return $this->name;
+  }
+
+  /**
+   * Modifica os vizinhos do país.
+   * 
+   * @return void
+   */
+
+  public function setNeighbors(array $neighbors): void{
+    $this->arr_neighbors = $neighbors;
+  }
+
+  /**
+   * Retorna os vizinhos do país.
+   * 
+   * @return array
+   */
+
+  public function getNeighbors(): array{
+    return $this->arr_neighbors;
+  }
+
+  /**
+   * Retorna o numero de tropas do país.
+   * 
+   * @return int
+   */
+
+  public function getNumberOfTroops(): int{
+    return $this->troops;
+  }
+
+   /**
+   * Retorna se o pais esta conquistado.
+   * 
+   * @return bool
+   */
+
+  public function isConquered(): bool{
+    return $this->conquered;
+  }
+
+  /**
+   * Define o país como conquistado e define o nome do consquistador.
+   * 
+   * @return void
+   */
+
+  public function setConquered(CountryInterface $conquerorCountry): void{
+    $this->conquered = true;
+    $this->conquerorCountry = $conquerorCountry;
+  }
+  
+  /**
+   * Chamado quando um pais perde suas tropas e é conquistada.
+   * @return void
+   */
+  public function conquer(CountryInterface $conqueredCountry): void{
+
+    
+    //Cria um array temporario somando os vizinhos do pais com o pais conquistado
+    $newNeighbors = array_unique(array_merge($this->getNeighbors(), $conqueredCountry->getNeighbors()), SORT_REGULAR);
+
+    //Remove as ocorrencias do pais conquistado e do pais conquistador
+    unset($newNeighbors[array_search($conqueredCountry, $newNeighbors)]);
+    unset($newNeighbors[array_search($this, $newNeighbors)]);
+    $newNeighbors = array_unique($newNeighbors, SORT_REGULAR);
+
+    //Atualiza os vizinhos
+    $this->arr_neighbors = array_values($newNeighbors);
+    
+    //Adiciona 1 no numero de conquistados do conquistador
+    $this->num_conquered++;
+  }
+
+  /**
+   * Diminui o numero de tropas por um valor dado.
+   * @return void
+   */
+  public function killTroops(int $killedTroops): void{
+    $this->troops-=$killedTroops;
+  }
+
+  /**
    * Builder.
    *
    * @param string $name
@@ -22,6 +134,8 @@ class BaseCountry implements CountryInterface {
    */
   public function __construct(string $name) {
     $this->name = $name;
+    $this->troops = 3;
+    $this->conquered = false;
   }
 
 }
