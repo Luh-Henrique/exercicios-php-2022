@@ -5,6 +5,10 @@ namespace Galoa\ExerciciosPhp2022\WebScrapping;
 //Importação para utilização do Spout e escrever xlxs.
 require_once 'src\Spout\Autoloader\autoload.php';
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
+use Box\Spout\Common\Entity\Style\Border;
+use Box\Spout\Common\Entity\Style\Color;
 
 //Importando bibliotecas necessarias para manipulação do DOM
 use DOMNodeList;
@@ -130,12 +134,41 @@ class Scrapper {
       WriterEntityFactory::createCell('Author 16 Instituition'),
   ];
 
-  $singleRow = WriterEntityFactory::createRow($cells);
+  //Aplicando estilização especial na primeira linha
+  $border = (new BorderBuilder())
+    ->setBorderBottom(Color::BLACK, Border::WIDTH_THIN, Border::STYLE_SOLID)
+    ->build();
+
+  $style = (new StyleBuilder())
+           ->setFontBold()
+           ->setBorder($border)
+           ->build();
+
+  //Escrevendo a primeira linha
+  $singleRow = WriterEntityFactory::createRow($cells, $style);
   $writer->addRow($singleRow);
+
+  //Adicionando valores obtidos do DOM
+  foreach($info as $key => $value){
+
+    //Adicionando as celulas com os dados obtidos do DOM.
+    $cellsData = [
+      WriterEntityFactory::createCell($key),
+      WriterEntityFactory::createCell($value[0]),
+      WriterEntityFactory::createCell($value[1]),
+    ];
+    
+    //Adicionando à linha as celulas dos autores e das suas instituições.
+    foreach($value[2] as $item){
+      array_push($cellsData, WriterEntityFactory::createCell($item));
+    }
+
+    //Finaliza a escrita dos autores e instituições para a linha.
+    $singleRow = WriterEntityFactory::createRow($cellsData);
+    $writer->addRow($singleRow);
+  }
 
   //Fechando o writer de xlxs.
   $writer->close();
-
   }
-
 }
