@@ -10,7 +10,7 @@ use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Common\Entity\Style\Border;
 use Box\Spout\Common\Entity\Style\Color;
 
-//Importando bibliotecas necessarias para manipulação do DOM
+//Importando bibliotecas necessárias para manipulação do DOM
 use DOMNodeList;
 use DOMXPath;
 
@@ -39,21 +39,21 @@ class Scrapper {
     //Inicializa o XPath para manipular e capturar dados do DOM.
     $xPath = new DOMXPath($dom);
 
-    //Realiza as buscas dos dados no DOM.
+    //Realiza as buscas de dados no DOM.
     $ids = $xPath->query('.//div[@class="volume-info"]');
     $titles = $xPath->query('.//h4[@class="my-xs paper-title"]');
     $types = $xPath->query('.//div[@class="tags mr-sm"]');
     $authorNames = $xPath->query('.//div[@class="authors"]');
     $authorInstitutions = $xPath->query('.//div[@class="authors"]/span/@title');
 
-    //Transformando os DOMNodeList em array padrão para melhor manipulação dos dados.
+    //Transformando os DOMNodeList obtidos em array padrão para melhor manipulação dos dados.
     $arrayID = $this->DOMtoArray($ids);
     $arrayTitle = $this->DOMtoArray($titles);
     $arrayType  = $this->DOMtoArray($types);
     $arrayAuthorName = $this->DOMtoArray($authorNames);
     $arrayAuthorInstitution = $this->DOMtoArray($authorInstitutions);
 
-    //Logica especial para autores e suas instituições
+    //Lógica especial para autores e suas instituições
     $arrayAuthors = array();
     $arrayAux = array();
     $j=0;
@@ -72,7 +72,7 @@ class Scrapper {
         if(!empty(trim($item))){
         array_push($arrayAux, $item);
 
-        //Verificação adicional para o erro no item 137475, onde tem uma virgula ao inves de autor em um span dentro do DOM
+        //Verificação adicional para o erro no item com ID 137475, onde tem um span vazio dentro do DOM (sem title e sem autor).
         if(empty(trim($arrayAuthorInstitution[$j]))){
           $j++;
         }
@@ -89,13 +89,13 @@ class Scrapper {
     //Criando map com os dados.
     $info = array_combine($arrayID, array_map(null, $arrayTitle, $arrayType, $arrayAuthors));
 
-    //Processo de escrita em arquivo xlxs
+    //Processo de escrita em arquivo xlxs.
     $writer = WriterEntityFactory::createXLSXWriter();
 
     //O resultado é escrito num arquivo result.xlsx no folder webscrapping onde tambem esta o modelo.
     $writer->openToFile('webscrapping\result.xlsx');
 
-    //Criando linha com os titulos de cada coluna.
+    //Criando linha com os títulos de cada coluna.
     $cells = [
       WriterEntityFactory::createCell('ID'),
       WriterEntityFactory::createCell('Title'),
@@ -151,14 +151,14 @@ class Scrapper {
   //Adicionando valores obtidos do DOM
   foreach($info as $key => $value){
 
-    //Adicionando as celulas com os dados obtidos do DOM.
+    //Adicionando as células com os dados obtidos do DOM.
     $cellsData = [
       WriterEntityFactory::createCell($key),
       WriterEntityFactory::createCell($value[0]),
       WriterEntityFactory::createCell($value[1]),
     ];
     
-    //Adicionando à linha as celulas dos autores e das suas instituições.
+    //Adicionando à linha, as células dos autores e das suas instituições.
     foreach($value[2] as $item){
       array_push($cellsData, WriterEntityFactory::createCell($item));
     }
