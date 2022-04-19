@@ -25,7 +25,7 @@ class ComputerPlayerCountry extends BaseCountry {
     if(rand(0,1) == 1 && $this->getNumberOfTroops()>1){
 
         //Pega um alvo aleatorio dentro dos seus vizinhos.
-        $target = $this->arr_neighbors[array_rand($this->arr_neighbors)];
+        $target = $this->getNeighbors()[array_rand($this->getNeighbors())];
         
         //Enquanto seu alvo ja tiver sido conquistado continua procurando quem é o atual dono do territorio (quem o conquistou).
         while($target->isConquered()){

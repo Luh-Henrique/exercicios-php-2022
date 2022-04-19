@@ -138,20 +138,37 @@ class BaseCountry implements CountryInterface {
     //Cria um array temporario somando os vizinhos do pais com o pais conquistado
     $newNeighbors = array_unique(array_merge($this->getNeighbors(), $conqueredCountry->getNeighbors()), SORT_REGULAR);
 
+    print_r(PHP_EOL . "new neighbors inicial: " . PHP_EOL);
+
+    foreach($newNeighbors as $i)
+    print_r($i->getName() . PHP_EOL);
+
     //Remove as ocorrencias do pais conquistado e do pais conquistador
     unset($newNeighbors[array_search($conqueredCountry, $newNeighbors)]);
     unset($newNeighbors[array_search($this, $newNeighbors)]);
-    $newNeighbors = array_unique($newNeighbors, SORT_REGULAR);
+    
+    //Remove paises ja conquistados pelo conquistador ou pelo pais conquistado.
+    foreach($newNeighbors as $key => $country){
+      if($country->getConquer() === $this || $country->getConquer() === $conqueredCountry){ 
+        unset($newNeighbors[$key]);
+      }
+    }
+
+    print_r(PHP_EOL . "new neighbors final: " . PHP_EOL);
+
+    foreach($newNeighbors as $i)
+    print_r($i->getName() . PHP_EOL);
 
     //Atualiza os vizinhos
     $this->arr_neighbors = array_values($newNeighbors);
     
-    //Adiciona 1 no numero de conquistados do conquistador
+    //Define o pais conquistado e adiciona 1 no numero de conquistados do conquistador
+    $conqueredCountry->setConquered($this);
     $this->num_conquered++;
   }
 
   /**
-   * Diminui o numero de tropas por um valor dado.
+   * Decreases the number of troops in this country by a given number.
    * @return void
    */
   public function killTroops(int $killedTroops): void{
