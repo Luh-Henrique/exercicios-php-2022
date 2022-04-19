@@ -138,11 +138,6 @@ class BaseCountry implements CountryInterface {
     //Cria um array temporario somando os vizinhos do pais com o pais conquistado
     $newNeighbors = array_unique(array_merge($this->getNeighbors(), $conqueredCountry->getNeighbors()), SORT_REGULAR);
 
-    print_r(PHP_EOL . "new neighbors inicial: " . PHP_EOL);
-
-    foreach($newNeighbors as $i)
-    print_r($i->getName() . PHP_EOL);
-
     //Remove as ocorrencias do pais conquistado e do pais conquistador
     unset($newNeighbors[array_search($conqueredCountry, $newNeighbors)]);
     unset($newNeighbors[array_search($this, $newNeighbors)]);
@@ -153,11 +148,6 @@ class BaseCountry implements CountryInterface {
         unset($newNeighbors[$key]);
       }
     }
-
-    print_r(PHP_EOL . "new neighbors final: " . PHP_EOL);
-
-    foreach($newNeighbors as $i)
-    print_r($i->getName() . PHP_EOL);
 
     //Atualiza os vizinhos
     $this->arr_neighbors = array_values($newNeighbors);
