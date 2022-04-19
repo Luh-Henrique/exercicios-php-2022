@@ -2,6 +2,10 @@
 
 namespace Galoa\ExerciciosPhp2022\WebScrapping;
 
+//Importação para utilização do Spout e escrever xlxs.
+require_once 'src\Spout\Autoloader\autoload.php';
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+
 //Importando bibliotecas necessarias para manipulação do DOM
 use DOMNodeList;
 use DOMXPath;
@@ -77,6 +81,61 @@ class Scrapper {
         //Finaliza o array.
         array_push($arrayAuthors, $arrayAux); 
     }
+
+    //Criando map com os dados.
+    $info = array_combine($arrayID, array_map(null, $arrayTitle, $arrayType, $arrayAuthors));
+
+    //Processo de escrita em arquivo xlxs
+    $writer = WriterEntityFactory::createXLSXWriter();
+
+    //O resultado é escrito num arquivo result.xlsx no folder webscrapping onde tambem esta o modelo.
+    $writer->openToFile('webscrapping\result.xlsx');
+
+    //Criando linha com os titulos de cada coluna.
+    $cells = [
+      WriterEntityFactory::createCell('ID'),
+      WriterEntityFactory::createCell('Title'),
+      WriterEntityFactory::createCell('Type'),
+      WriterEntityFactory::createCell('Author 1'),
+      WriterEntityFactory::createCell('Author 1 Instituition'),
+      WriterEntityFactory::createCell('Author 2'),
+      WriterEntityFactory::createCell('Author 2 Instituition'),
+      WriterEntityFactory::createCell('Author 3'),
+      WriterEntityFactory::createCell('Author 3 Instituition'),
+      WriterEntityFactory::createCell('Author 4'),
+      WriterEntityFactory::createCell('Author 4 Instituition'),
+      WriterEntityFactory::createCell('Author 5'),
+      WriterEntityFactory::createCell('Author 5 Instituition'),
+      WriterEntityFactory::createCell('Author 6'),
+      WriterEntityFactory::createCell('Author 6 Instituition'),
+      WriterEntityFactory::createCell('Author 7'),
+      WriterEntityFactory::createCell('Author 7 Instituition'),
+      WriterEntityFactory::createCell('Author 8'),
+      WriterEntityFactory::createCell('Author 8 Instituition'),
+      WriterEntityFactory::createCell('Author 9'),
+      WriterEntityFactory::createCell('Author 9 Instituition'),
+      WriterEntityFactory::createCell('Author 10'),
+      WriterEntityFactory::createCell('Author 10 Instituition'),
+      WriterEntityFactory::createCell('Author 11'),
+      WriterEntityFactory::createCell('Author 11 Instituition'),
+      WriterEntityFactory::createCell('Author 12'),
+      WriterEntityFactory::createCell('Author 12 Instituition'),
+      WriterEntityFactory::createCell('Author 13'),
+      WriterEntityFactory::createCell('Author 13 Instituition'),
+      WriterEntityFactory::createCell('Author 14'),
+      WriterEntityFactory::createCell('Author 14 Instituition'),
+      WriterEntityFactory::createCell('Author 15'),
+      WriterEntityFactory::createCell('Author 15 Instituition'),
+      WriterEntityFactory::createCell('Author 16'),
+      WriterEntityFactory::createCell('Author 16 Instituition'),
+  ];
+
+  $singleRow = WriterEntityFactory::createRow($cells);
+  $writer->addRow($singleRow);
+
+  //Fechando o writer de xlxs.
+  $writer->close();
+
   }
 
 }
