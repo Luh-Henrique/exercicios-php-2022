@@ -36,6 +36,13 @@ class BaseCountry implements CountryInterface {
   protected $conquerorCountry;
 
   /**
+   * Numero de paises conquistados por este pais, para ser usado ao dar tropas no inicio do round.
+   *
+   * @var int
+   */
+  protected $num_conquered;
+
+  /**
    * Numero de tropas do país.
    *
    * @var int
@@ -80,6 +87,14 @@ class BaseCountry implements CountryInterface {
 
   public function getNumberOfTroops(): int{
     return $this->troops;
+  }
+
+  /** 
+   * Renova as tropas ao inicio de cada round como descrito nas regras.
+   * 
+   */
+  public function giveTroops(): void{
+    $this->troops+=(3+($this->num_conquered));
   }
 
    /**
@@ -153,6 +168,7 @@ class BaseCountry implements CountryInterface {
     $this->name = $name;
     $this->troops = 3;
     $this->conquered = false;
+    $this->num_conquered = 0;
   }
 
 }

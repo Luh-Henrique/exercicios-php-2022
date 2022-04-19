@@ -17,6 +17,12 @@ interface CountryInterface {
    */
   public function getName(): string;
 
+  /** 
+   * Give new troops to the country based on the rules.
+   * 
+   */
+  public function giveTroops(): void;
+  
   /**
    * Sets the neighbors of this country.
    *

@@ -132,6 +132,13 @@ class Game {
       }
       sleep(1);
     }
+
+    /*Adiciona novas tropas no fim do round 
+     Obs: Se torna igual a dar tropas no inicio, porem fica mais visivel durante o jogo atualizar as tropas aqui)
+    */
+    foreach ($this->getUnconqueredCountries() as $activePlayer) {
+      $activePlayer->giveTroops();
+    }
   }
 
   /**
