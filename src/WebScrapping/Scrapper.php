@@ -44,6 +44,39 @@ class Scrapper {
     $arrayType  = $this->DOMtoArray($types);
     $arrayAuthorName = $this->DOMtoArray($authorNames);
     $arrayAuthorInstitution = $this->DOMtoArray($authorInstitutions);
+
+    //Logica especial para autores e suas instituições
+    $arrayAuthors = array();
+    $arrayAux = array();
+    $j=0;
+
+    //Para cada conjunto de autores por publicação
+    for($i=0;$i<count($arrayAuthorName);$i++){
+
+      //Explode os autores num array adicional
+      $aux = explode(';', $arrayAuthorName[$i]);
+
+      $arrayAux = array();
+
+      //Cria um array onde o autor vem seguido de sua instituição.
+      foreach($aux as $item){
+
+        if(!empty(trim($item))){
+        array_push($arrayAux, $item);
+
+        //Verificação adicional para o erro no item 137475, onde tem uma virgula ao inves de autor em um span dentro do DOM
+        if(empty(trim($arrayAuthorInstitution[$j]))){
+          $j++;
+        }
+
+        //Escreve o nome da instituição correspondente uma posição após o nome do autor.
+        array_push($arrayAux, $arrayAuthorInstitution[$j]);
+        $j++;
+        }
+      }
+        //Finaliza o array.
+        array_push($arrayAuthors, $arrayAux); 
+    }
   }
 
 }
