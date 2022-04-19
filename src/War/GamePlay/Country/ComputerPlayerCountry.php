@@ -20,6 +20,25 @@ class ComputerPlayerCountry extends BaseCountry {
    */
   public function chooseToAttack(): ?CountryInterface {
     // @TODO
-  }
 
+    //Caso vai atacar e tem tropas para isso.
+    if(rand(0,1) == 1 && $this->getNumberOfTroops()>1){
+
+        //Pega um alvo aleatorio dentro dos seus vizinhos.
+        $target = $this->arr_neighbors[array_rand($this->arr_neighbors)];
+        
+        //Enquanto seu alvo ja tiver sido conquistado continua procurando quem é o atual dono do territorio (quem o conquistou).
+        while($target->isConquered()){
+            $target = $target->getConquer();
+          }
+
+        //Retorna o alvo final.
+        return $target;
+    }
+
+    //Caso não vá atacar.
+    else{
+      return null;
+    }
+}
 }

@@ -102,6 +102,16 @@ class BaseCountry implements CountryInterface {
     $this->conquered = true;
     $this->conquerorCountry = $conquerorCountry;
   }
+
+  /**
+   * Retorna o conquistador do pais caso haja um.
+   * 
+   * @return CountryInterface | null
+   */
+
+  public function getConquer(): CountryInterface | null{
+    return $this->conquerorCountry;
+  }
   
   /**
    * Chamado quando um pais perde suas tropas e é conquistada.
