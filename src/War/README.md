@@ -55,3 +55,9 @@ Galoa\ExerciciosPhp2022\War\GamePlay\BattlefieldInterface::computeBattle) in
 ```
 
 Isso vai ocorrer porque você não implementou o jogo ainda. Quando o exercício estiver pronto, você vai ver a progressão do jogo.
+
+
+
+### Obs Adicional By Luiz Henrique
+
+Durante a execução do código, Gondor nunca irá atacar, isso se dá pois a lógica do código espera que ele seja um jogador de verdade, coisa que não foi pedida para se implementar no teste. Portanto não mexi na questão dele também ser controlado pelo computador (Realizar mudanças na função createWorld() dentro de GameManager\CountryList.php), nem na questão de adicionar uma lógica para jogador humano (GamePlay\Country\HumanPlayerCountry.php).

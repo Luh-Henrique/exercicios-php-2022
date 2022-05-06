@@ -4,6 +4,7 @@ namespace Galoa\ExerciciosPhp2022\WebScrapping;
 
 //Importação para utilização do Spout e escrever xlxs.
 require_once 'src\Spout\Autoloader\autoload.php';
+
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
@@ -17,25 +18,28 @@ use DOMXPath;
 /**
  * Does the scrapping of a webpage.
  */
-class Scrapper {
+class Scrapper
+{
 
   //Função adicional para tranformar DOMNodeList em array para melhor manipulação de dados
-  function DOMtoArray(DOMNodeList $domItem): array{
+  function DOMtoArray(DOMNodeList $domNodeList): array
+  {
 
     $array = array();
 
-    foreach($domItem as $i){
-      array_push($array, $i->textContent);
+    foreach ($domNodeList as $i) {
+      array_push($array, mb_strtoupper($i->textContent));
     }
 
     return $array;
-}
+  }
 
   /**
    * Loads paper information from the HTML and creates a XLSX file.
    */
-  public function scrap(\DOMDocument $dom): void {
-    
+  public function scrap(\DOMDocument $dom): void
+  {
+
     //Inicializa o XPath para manipular e capturar dados do DOM.
     $xPath = new DOMXPath($dom);
 
@@ -55,35 +59,34 @@ class Scrapper {
 
     //Lógica especial para autores e suas instituições
     $arrayAuthors = array();
-    $arrayAux = array();
-    $j=0;
 
     //Para cada conjunto de autores por publicação
-    for($i=0;$i<count($arrayAuthorName);$i++){
+    for ($i = 0, $j = 0; $i < count($arrayAuthorName); $i++) {
 
       //Explode os autores num array adicional
       $aux = explode(';', $arrayAuthorName[$i]);
-
       $arrayAux = array();
 
       //Cria um array onde o autor vem seguido de sua instituição.
-      foreach($aux as $item){
+      foreach ($aux as $item) {
 
-        if(!empty(trim($item))){
-        array_push($arrayAux, $item);
+        if (!empty(trim($item))) {
+          array_push($arrayAux, $item);
 
-        //Verificação adicional para o erro no item com ID 137475, onde tem um span vazio dentro do DOM (sem title e sem autor).
-        if(empty(trim($arrayAuthorInstitution[$j]))){
+          //Verificação adicional para o erro no item com ID 137475, onde tem um span vazio dentro do DOM (sem title e sem autor).
+          if (empty(trim($arrayAuthorInstitution[$j]))) {
+            $j++;
+          }
+
+          //Escreve o nome da instituição correspondente uma posição após o nome do autor.
+          array_push($arrayAux, $arrayAuthorInstitution[$j]);
           $j++;
         }
-
-        //Escreve o nome da instituição correspondente uma posição após o nome do autor.
-        array_push($arrayAux, $arrayAuthorInstitution[$j]);
-        $j++;
-        }
       }
-        //Finaliza o array.
-        array_push($arrayAuthors, $arrayAux); 
+
+      //Finaliza uma posição do array dos autores.
+      //Cada posição tera um array com os nomes dos autores e na posição seqguinte a sua instituição.
+      array_push($arrayAuthors, $arrayAux);
     }
 
     //Criando map com os dados.
@@ -132,43 +135,43 @@ class Scrapper {
       WriterEntityFactory::createCell('Author 15 Instituition'),
       WriterEntityFactory::createCell('Author 16'),
       WriterEntityFactory::createCell('Author 16 Instituition'),
-  ];
-
-  //Aplicando estilização especial na primeira linha
-  $border = (new BorderBuilder())
-    ->setBorderBottom(Color::BLACK, Border::WIDTH_THIN, Border::STYLE_SOLID)
-    ->build();
-
-  $style = (new StyleBuilder())
-           ->setFontBold()
-           ->setBorder($border)
-           ->build();
-
-  //Escrevendo a primeira linha
-  $singleRow = WriterEntityFactory::createRow($cells, $style);
-  $writer->addRow($singleRow);
-
-  //Adicionando valores obtidos do DOM
-  foreach($info as $key => $value){
-
-    //Adicionando as células com os dados obtidos do DOM.
-    $cellsData = [
-      WriterEntityFactory::createCell($key),
-      WriterEntityFactory::createCell($value[0]),
-      WriterEntityFactory::createCell($value[1]),
     ];
-    
-    //Adicionando à linha, as células dos autores e das suas instituições.
-    foreach($value[2] as $item){
-      array_push($cellsData, WriterEntityFactory::createCell($item));
+
+    //Aplicando estilização especial na primeira linha, deixando similar ao modelo.
+    $border = (new BorderBuilder())
+      ->setBorderBottom(Color::BLACK, Border::WIDTH_THIN, Border::STYLE_SOLID)
+      ->build();
+
+    $style = (new StyleBuilder())
+      ->setFontBold()
+      ->setBorder($border)
+      ->build();
+
+    //Escrevendo a primeira linha
+    $singleRow = WriterEntityFactory::createRow($cells, $style);
+    $writer->addRow($singleRow);
+
+    //Adicionando valores obtidos do DOM
+    foreach ($info as $key => $value) {
+
+      //Criando array que criará as células com os dados obtidos do DOM.
+      $cellsData = [
+        WriterEntityFactory::createCell($key),      //ID
+        WriterEntityFactory::createCell($value[0]), //Title
+        WriterEntityFactory::createCell($value[1]), //Type
+      ];
+
+      //Adicionando à linha, as células dos autores e das suas instituições.
+      foreach ($value[2] as $item) {
+        array_push($cellsData, WriterEntityFactory::createCell($item)); // Para cada autor e instituição.
+      }
+
+      //Finaliza a escrita de uma linha.
+      $singleRow = WriterEntityFactory::createRow($cellsData);
+      $writer->addRow($singleRow);
     }
 
-    //Finaliza a escrita dos autores e instituições para a linha.
-    $singleRow = WriterEntityFactory::createRow($cellsData);
-    $writer->addRow($singleRow);
-  }
-
-  //Fechando o writer de xlxs.
-  $writer->close();
+    //Fechando o writer de xlxs.
+    $writer->close();
   }
 }

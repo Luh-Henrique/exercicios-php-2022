@@ -7,7 +7,8 @@ use Galoa\ExerciciosPhp2022\War\GamePlay\Country\CountryInterface;
 /**
  * Defines a class that will roll the dice and compute the winners of a battle.
  */
-interface BattlefieldInterface {
+interface BattlefieldInterface
+{
 
   /**
    * Rolls the dice for a country.
@@ -38,5 +39,4 @@ interface BattlefieldInterface {
    *   The country that is defending from the attack.
    */
   public function computeBattle(CountryInterface $attackingCountry, array $attackingDice, CountryInterface $defendingCountry, array $defendingDice): void;
-
 }

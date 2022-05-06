@@ -10,7 +10,8 @@ use Galoa\ExerciciosPhp2022\War\GamePlay\Country\HumanPlayerCountry;
 /**
  * Defines a Game, it holds the players and interacts with the UI.
  */
-class Game {
+class Game
+{
 
   /**
    * The battlefield.
@@ -29,7 +30,8 @@ class Game {
   /**
    * Instantiates a new game.
    */
-  public static function create(): Game {
+  public static function create(): Game
+  {
     return new static(new Battlefield(), CountryList::createWorld());
   }
 
@@ -41,7 +43,8 @@ class Game {
    * @param \Galoa\ExerciciosPhp2022\War\GamePlay\Country\CountryInterface[] $countries
    *   A list of countries.
    */
-  public function __construct(BattlefieldInterface $battlefield, array $countries) {
+  public function __construct(BattlefieldInterface $battlefield, array $countries)
+  {
     $this->battlefield = $battlefield;
     $this->countries = $countries;
   }
@@ -49,7 +52,8 @@ class Game {
   /**
    * Plays the game.
    */
-  public function play(): void {
+  public function play(): void
+  {
     $i = 0;
     while (!$this->gameOver()) {
       $i++;
@@ -62,7 +66,8 @@ class Game {
   /**
    * Display stats.
    */
-  public function stats(): void {
+  public function stats(): void
+  {
     foreach ($this->countries as $country) {
       print "  " . $country->getName() . ": " . ($country->isConquered() ? "DERROTADO" : $country->getNumberOfTroops() . " tropas") . "\n";
     }
@@ -71,7 +76,8 @@ class Game {
   /**
    * Displays the game results.
    */
-  public function results(): void {
+  public function results(): void
+  {
     $countries = $this->getUnconqueredCountries();
     // Should have only one.
     if ($winner = reset($countries)) {
@@ -88,22 +94,21 @@ class Game {
   /**
    * Plays one round.
    */
-  protected function playRound(): void {
+  protected function playRound(): void
+  {
     foreach ($this->getUnconqueredCountries() as $attackingCountry) {
       print "----- Vez de " . $attackingCountry->getName() . "\n";
 
       $defendingCountry = NULL;
       if ($attackingCountry instanceof ComputerPlayerCountry) {
         $defendingCountry = $attackingCountry->chooseToAttack();
-      }
-      elseif ($attackingCountry instanceof HumanPlayerCountry) {
+      } elseif ($attackingCountry instanceof HumanPlayerCountry) {
         $neighbors = $attackingCountry->getNeighbors();
         $defendingCountryName = NULL;
         do {
           $typedName = readline("Digite o nome de um país para atacar ou deixe em branco para não atacar ninguém:\n");
           $defendingCountryName = trim($typedName);
-        }
-        while ($defendingCountryName && !isset($neighbors[$defendingCountryName]));
+        } while ($defendingCountryName && !isset($neighbors[$defendingCountryName]));
 
         if ($defendingCountryName) {
           $defendingCountry = $this->countries[$defendingCountryName];
@@ -125,18 +130,17 @@ class Game {
         if ($defendingCountry->isConquered()) {
           $attackingCountry->conquer($defendingCountry);
           print "  " . $defendingCountry->getName() . " foi anexado por " . $attackingCountry->getName() . "!\n";
-        }
-        else {
+        } else {
           print "  " . $defendingCountry->getName() . " conseguiu se defender!\n";
         }
       }
       sleep(1);
     }
 
-   /**
-    * Adiciona novas tropas no fim do round 
-    * Obs: Se torna igual a dar tropas no inicio, porem fica mais visivel durante o jogo atualizar as tropas aqui)
-    */
+    /**
+     * Adiciona novas tropas no fim do round 
+     * Obs: Se torna igual a dar tropas no inicio, porem fica mais visivel durante o jogo atualizar as tropas aqui)
+     */
     foreach ($this->getUnconqueredCountries() as $activePlayer) {
       $activePlayer->giveTroops();
     }
@@ -148,7 +152,8 @@ class Game {
    * @return bool
    *   TRUE if the game is over, FALSE otherwise.
    */
-  protected function gameOver(): bool {
+  protected function gameOver(): bool
+  {
     // If there is only one remaining country, the game is over.
     return count($this->getUnconqueredCountries()) <= 1;
   }
@@ -159,10 +164,10 @@ class Game {
    * @return \Galoa\ExerciciosPhp2022\War\GamePlay\Country\CountryInterface[]
    *   An array of countries.
    */
-  protected function getUnconqueredCountries(): array {
-    return array_filter($this->countries, function($country) {
+  protected function getUnconqueredCountries(): array
+  {
+    return array_filter($this->countries, function ($country) {
       return !$country->isConquered();
     });
   }
-
 }

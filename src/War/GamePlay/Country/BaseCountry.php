@@ -5,7 +5,8 @@ namespace Galoa\ExerciciosPhp2022\War\GamePlay\Country;
 /**
  * Defines a country, that is also a player.
  */
-class BaseCountry implements CountryInterface {
+class BaseCountry implements CountryInterface
+{
 
   /**
    * The name of the country.
@@ -55,7 +56,8 @@ class BaseCountry implements CountryInterface {
    * @return string
    */
 
-  public function getName(): string{
+  public function getName(): string
+  {
     return $this->name;
   }
 
@@ -65,7 +67,8 @@ class BaseCountry implements CountryInterface {
    * @return void
    */
 
-  public function setNeighbors(array $neighbors): void{
+  public function setNeighbors(array $neighbors): void
+  {
     $this->arr_neighbors = $neighbors;
   }
 
@@ -75,7 +78,8 @@ class BaseCountry implements CountryInterface {
    * @return array
    */
 
-  public function getNeighbors(): array{
+  public function getNeighbors(): array
+  {
     return $this->arr_neighbors;
   }
 
@@ -85,7 +89,8 @@ class BaseCountry implements CountryInterface {
    * @return int
    */
 
-  public function getNumberOfTroops(): int{
+  public function getNumberOfTroops(): int
+  {
     return $this->troops;
   }
 
@@ -93,17 +98,19 @@ class BaseCountry implements CountryInterface {
    * Renova as tropas ao inicio de cada round como descrito nas regras.
    * 
    */
-  public function giveTroops(): void{
-    $this->troops+=(3+($this->num_conquered));
+  public function giveTroops(): void
+  {
+    $this->troops += (3 + ($this->num_conquered));
   }
 
-   /**
+  /**
    * Retorna se o pais esta conquistado.
    * 
    * @return bool
    */
 
-  public function isConquered(): bool{
+  public function isConquered(): bool
+  {
     return $this->conquered;
   }
 
@@ -113,7 +120,8 @@ class BaseCountry implements CountryInterface {
    * @return void
    */
 
-  public function setConquered(CountryInterface $conquerorCountry): void{
+  public function setConquered(CountryInterface $conquerorCountry): void
+  {
     $this->conquered = true;
     $this->conquerorCountry = $conquerorCountry;
   }
@@ -124,34 +132,40 @@ class BaseCountry implements CountryInterface {
    * @return CountryInterface | null
    */
 
-  public function getConquer(): CountryInterface | null{
+  public function getConquer(): CountryInterface | null
+  {
     return $this->conquerorCountry;
   }
-  
+
   /**
    * Chamado quando um pais perde suas tropas e é conquistada.
    * @return void
    */
-  public function conquer(CountryInterface $conqueredCountry): void{
+  public function conquer(CountryInterface $conqueredCountry): void
+  {
 
-    
     //Cria um array temporario somando os vizinhos do pais com o pais conquistado
     $newNeighbors = array_unique(array_merge($this->getNeighbors(), $conqueredCountry->getNeighbors()), SORT_REGULAR);
 
     //Remove as ocorrencias do pais conquistado e do pais conquistador
-    unset($newNeighbors[array_search($conqueredCountry, $newNeighbors)]);
-    unset($newNeighbors[array_search($this, $newNeighbors)]);
-    
+    if ($key = array_search($conqueredCountry, $newNeighbors)) {
+      unset($newNeighbors[$key]);
+    }
+
+    if ($key = array_search($this, $newNeighbors)) {
+      unset($newNeighbors[$key]);
+    }
+
     //Remove paises ja conquistados pelo conquistador ou pelo pais conquistado.
-    foreach($newNeighbors as $key => $country){
-      if($country->getConquer() === $this || $country->getConquer() === $conqueredCountry){ 
+    foreach ($newNeighbors as $key => $country) {
+      if ($country->getConquer() === $this || $country->getConquer() === $conqueredCountry) {
         unset($newNeighbors[$key]);
       }
     }
 
     //Atualiza os vizinhos
-    $this->arr_neighbors = array_values($newNeighbors);
-    
+    $this->setNeighbors(array_values($newNeighbors));
+
     //Define o pais conquistado e adiciona 1 no numero de conquistados do conquistador
     $conqueredCountry->setConquered($this);
     $this->num_conquered++;
@@ -161,8 +175,9 @@ class BaseCountry implements CountryInterface {
    * Decreases the number of troops in this country by a given number.
    * @return void
    */
-  public function killTroops(int $killedTroops): void{
-    $this->troops-=$killedTroops;
+  public function killTroops(int $killedTroops): void
+  {
+    $this->troops -= $killedTroops;
   }
 
   /**
@@ -171,11 +186,11 @@ class BaseCountry implements CountryInterface {
    * @param string $name
    *   The name of the country.
    */
-  public function __construct(string $name) {
+  public function __construct(string $name)
+  {
     $this->name = $name;
     $this->troops = 3;
     $this->conquered = false;
     $this->num_conquered = 0;
   }
-
 }
